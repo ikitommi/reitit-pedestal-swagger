@@ -14,8 +14,8 @@
             [muuntaja.core :as m]
             [clojure.java.io :as io]))
 
-(def routing-interceptor
-  (router/routing-interceptor
+(def router
+  (router/router
     (http/router
       [["/swagger.json"
         {:get {:no-doc true
@@ -101,7 +101,7 @@
       (merge {:env :dev
               :io.pedestal.http/join? false
               :io.pedestal.http/allowed-origins {:creds true :allowed-origins (constantly true)}})
-      (router/default-interceptors routing-interceptor)
+      (router/default-interceptors router)
       io.pedestal.http/dev-interceptors
       io.pedestal.http/create-server
       io.pedestal.http/start

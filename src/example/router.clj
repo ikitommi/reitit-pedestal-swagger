@@ -6,7 +6,7 @@
             [reitit.http])
   (:import (reitit.interceptor Executor)))
 
-(def pedestal-executor
+(def executor
   (reify
     Executor
     (queue [_ interceptors]
@@ -17,22 +17,25 @@
     (enqueue [_ context interceptors]
       (chain/enqueue context interceptors))))
 
-(defn routing-interceptor
-  ([router]
-    (routing-interceptor router nil))
-  ([router default-handler]
-    (routing-interceptor router default-handler nil))
-  ([router default-handler {:keys [interceptors]}]
+(defn router
+  ([http-router]
+   (router http-router nil))
+  ([http-router default-handler]
+   (router http-router default-handler nil))
+  ([http-router default-handler {:keys [interceptors]}]
    (interceptor/interceptor
      (reitit.http/routing-interceptor
-       router
+       http-router
        default-handler
-       {:executor pedestal-executor
+       {:executor executor
         :interceptors interceptors}))))
+
+(defn change-router [router]
+  (fn [{:keys [name] :as interceptor}]
+    (if (= name :io.pedestal.http.route/router) router interceptor)))
 
 (defn default-interceptors [spec router]
   (-> spec
       (assoc ::http/routes [])
       (http/default-interceptors)
-      (update ::http/interceptors (comp vec butlast))
-      (update ::http/interceptors conj router)))
+      (update ::http/interceptors (partial map (change-router router)))))
