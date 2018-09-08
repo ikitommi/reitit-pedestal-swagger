@@ -2,6 +2,7 @@
   (:require [io.pedestal.interceptor.chain :as chain]
             [io.pedestal.interceptor :as interceptor]
             [io.pedestal.http :as http]
+            [io.pedestal.http.route :as route]
             [reitit.interceptor]
             [reitit.http])
   (:import (reitit.interceptor Executor)))
@@ -32,7 +33,7 @@
 
 (defn change-router [router]
   (fn [{:keys [name] :as interceptor}]
-    (if (= name :io.pedestal.http.route/router) router interceptor)))
+    (if (= name ::route/router) router interceptor)))
 
 (defn default-interceptors [spec router]
   (-> spec
