@@ -1,6 +1,6 @@
 (ns example.server
   (:require [io.pedestal.http]
-            [reitit.interceptor.pedestal :as pedestal]
+            [example.router :as router]
             [reitit.ring :as ring]
             [reitit.http :as http]
             [reitit.swagger :as swagger]
@@ -15,7 +15,7 @@
             [clojure.java.io :as io]))
 
 (def routing-interceptor
-  (pedestal/routing-interceptor
+  (router/routing-interceptor
     (http/router
       [["/swagger.json"
         {:get {:no-doc true
@@ -101,7 +101,7 @@
       (merge {:env :dev
               :io.pedestal.http/join? false
               :io.pedestal.http/allowed-origins {:creds true :allowed-origins (constantly true)}})
-      (pedestal/default-interceptors routing-interceptor)
+      (router/default-interceptors routing-interceptor)
       io.pedestal.http/dev-interceptors
       io.pedestal.http/create-server
       io.pedestal.http/start

@@ -1,4 +1,4 @@
-(ns reitit.interceptor.pedestal
+(ns example.router
   (:require [io.pedestal.interceptor.chain :as chain]
             [io.pedestal.interceptor :as interceptor]
             [io.pedestal.http :as http]
